@@ -1,29 +1,34 @@
 class BookPreview extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' }); // Use Shadow DOM for encapsulation
-    }
+  constructor() {
+      super();
+      // Attach a shadow DOM to encapsulate styles and markup
+      this.attachShadow({ mode: 'open' });
+  }
 
-    static get observedAttributes() {
-        return ['author', 'id', 'image', 'title'];
-    }
+  // Specify which attributes to observe for changes
+  static get observedAttributes() {
+      return ['author', 'id', 'image', 'title'];
+  }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue !== newValue) {
-            this.render();
-        }
-    }
+  // Callback function that runs when an observed attribute changes
+  attributeChangedCallback(name, oldValue, newValue) {
+      if (oldValue !== newValue) {
+          this.render(); // Re-render the component when an attribute changes
+      }
+  }
 
-    connectedCallback() {
-        this.render();
-        this.addEventListeners();
-    }
+  // Called when the component is added to the DOM
+  connectedCallback() {
+      this.render(); // Initial render
+      this.addEventListeners(); // Set up event listeners
+  }
 
-    render() {
-        const { author, id, image, title } = this.attributes;
-        this.shadowRoot.innerHTML = `
-            <style>
-              .preview {
+  // Function to render the component's HTML
+  render() {
+      const { author, id, image, title } = this.attributes;
+      this.shadowRoot.innerHTML = `
+          <style>
+.preview {
   border-width: 0;
   width: 100%;
   font-family: Roboto, sans-serif;
@@ -78,26 +83,30 @@ class BookPreview extends HTMLElement {
 .preview__author {
   color: rgba(var(--color-dark), 0.4);
 }
-            </style>
-            <button class="preview" data-preview="${id.value}">
-                <img class="preview__image" src="${image.value}" />
-                <div class="preview__info">
-                    <h3 class="preview__title">${title.value}</h3>
-                    <div class="preview__author">${author.value}</div>
-                </div>
-            </button>
-        `;
-    }
+          </style>
+          <button class="preview" data-preview="${id.value}">
+              <img class="preview__image" src="${image.value}" />
+              <div class="preview__info">
+                  <h3 class="preview__title">${title.value}</h3>
+                  <div class="preview__author">${author.value}</div>
+              </div>
+          </button>
+      `;
+  }
 
-    addEventListeners() {
-        this.shadowRoot.querySelector('.preview').addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('book-preview-clicked', {
-                detail: { id: this.getAttribute('id') },
-                bubbles: true,
-                composed: true
-            }));
-        });
-    }
+  // Function to add event listeners to the component
+  addEventListeners() {
+      // Listen for clicks on the preview button
+      this.shadowRoot.querySelector('.preview').addEventListener('click', () => {
+          // Dispatch a custom event with the book ID
+          this.dispatchEvent(new CustomEvent('book-preview-clicked', {
+              detail: { id: this.getAttribute('id') }, // Pass the book ID
+              bubbles: true, // Allow the event to bubble up
+              composed: true // Allow the event to cross shadow DOM boundaries
+          }));
+      });
+  }
 }
 
+// Define the new element
 customElements.define('book-preview', BookPreview);
